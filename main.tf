@@ -12,14 +12,14 @@ resource "aws_security_group" "hello-terra-ssh-http" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<cidr>"]
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["<cidr>"]
   }
 
   egress {
@@ -31,13 +31,27 @@ resource "aws_security_group" "hello-terra-ssh-http" {
 }
 
 resource "aws_instance" "hello-terra" {
-  ami = "ami-01e36b7901e884a10"
-  instance_type = "t2.micro"
+  ami               = "ami-01e36b7901e884a10"
+  instance_type     = "t2.micro"
   availability_zone = "us-east-2c"
-  security_groups = ["${aws_security_group.hello-terra-ssh-http.name}"]
+  security_groups   = ["${aws_security_group.hello-terra-ssh-http.name}"]
 
 
   tags = {
     Name = "Webserver"
+  }
+  monitoring = true
+
+  metadata_options {
+    http_endpoint = "disabled"
+    http_tokens   = "required"
+  }
+}
+
+resource "aws_vpc" "<resource_name>" {
+  cidr_block = "<cidr>"
+
+  tags = {
+    Name = "main"
   }
 }
